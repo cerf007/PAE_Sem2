@@ -1,8 +1,7 @@
-package ni.edu.uam.registropaciente;
+package ni.edu.uam.registropaciente.contollers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import ni.edu.uam.registropaciente.dao.PatientDAO;
 import ni.edu.uam.registropaciente.modelos.Patient;
 
@@ -20,6 +19,15 @@ public class PatientController {
     private Label lblContador;
 
     @FXML
+    private DatePicker dtpFchaIngreso;
+
+    @FXML
+    private RadioButton rbtnGenero;
+
+    @FXML
+    private ListView lvRegistros;
+
+    @FXML
     protected void agregarOnClick(){
         leerDatos();
         cantidadPatient();
@@ -35,12 +43,14 @@ public class PatientController {
     }
 
     private void agregarPatient(Patient patient) {
-        patients.agregarPatiente(patient);
+        patients.agregar(patient);
     }
 
     private void cantidadPatient(){
-        lblContador.setText("Registros almacenados: " + patients.listarPatient().size());
+        lblContador.setText("Registros almacenados: " + patients.obtenerRegistros().size());
     }
+
+
 
     private void limpiarCampos(){
         txtNombre.setText("");

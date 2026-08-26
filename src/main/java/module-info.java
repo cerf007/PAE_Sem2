@@ -6,4 +6,6 @@ module ni.edu.uam.registropaciente {
 
     opens ni.edu.uam.registropaciente to javafx.fxml;
     exports ni.edu.uam.registropaciente;
+    exports ni.edu.uam.registropaciente.contollers;
+    opens ni.edu.uam.registropaciente.contollers to javafx.fxml;
 }
