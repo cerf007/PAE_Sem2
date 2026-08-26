@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class UserController {
+
     @FXML
     private TextField txtUser;
 
@@ -25,28 +26,35 @@ public class UserController {
 
     @FXML
     private void handleLogin(ActionEvent event) {
-        String user = txtUser.getText();
-        String pass = txtPassword.getText();
+        String user = leerUsuario();
+        String pass = leerPassword();
 
-        if (user.isBlank() || pass.isBlank()) {
+        if (!comprobarCredenciales(user, pass)) {
             lblError.setText("Por favor ingrese usuario y contraseña.");
             return;
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("patient-view.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Gestión de Pacientes");
-            stage.centerOnScreen();
-            stage.show();
-
+            abrirVentanaPacientes(event);
         } catch (IOException e) {
             e.printStackTrace();
             lblError.setText("Error al cargar la vista de pacientes.");
         }
     }
 
+    private String leerUsuario() {
+        return txtUser.getText().trim();
+    }
+
+    private String leerPassword() {
+        return txtPassword.getText();
+    }
+
+    private boolean comprobarCredenciales(String user, String pass) {
+        return !user.isBlank() && !pass.isBlank();
+    }
+
+    private void abrirVentanaPacientes(ActionEvent event) throws IOException {
+        Navegador.cambiarVentana(event, "patient-view.fxml", "Gestión de Pacientes");
+    }
 }
