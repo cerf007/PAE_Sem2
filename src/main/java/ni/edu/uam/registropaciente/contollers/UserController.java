@@ -1,5 +1,6 @@
 package ni.edu.uam.registropaciente.contollers;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,9 +22,11 @@ public class UserController implements Initializable {
     @FXML private PasswordField txtContrasena;
     @FXML private ImageView imgLogo;
 
+    private int intentos = 0;
+    private final int INTENTOS_MAXIMOS = 3;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Carga de logo.jpg
         Image logo = cargarImagen("/ni/edu/uam/registropaciente/images/logo.jpg");
         if (imgLogo != null && logo != null) {
             imgLogo.setImage(logo);
@@ -35,8 +38,6 @@ public class UserController implements Initializable {
             InputStream is = getClass().getResourceAsStream(ruta);
             if (is != null) {
                 return new Image(is);
-            } else {
-                System.err.println("No se encontró la imagen en: " + ruta);
             }
         } catch (Exception e) {
             System.err.println("Error al cargar imagen " + ruta + ": " + e.getMessage());
@@ -54,7 +55,6 @@ public class UserController implements Initializable {
             mostrarAlerta("Acceso Concedido", "¡Bienvenido al sistema!", Alert.AlertType.INFORMATION);
 
             try {
-                // Uso de la clase Navegador
                 Navegador.cambiarVentana(event, "/ni/edu/uam/registropaciente/patient-view.fxml", "Gestión de Pacientes");
             } catch (Exception e) {
                 System.err.println("Error al navegar a la pantalla de pacientes: " + e.getMessage());
@@ -62,7 +62,21 @@ public class UserController implements Initializable {
             }
 
         } else {
-            mostrarAlerta("Error de Autenticación", "Usuario o contraseña incorrectos.", Alert.AlertType.ERROR);
+            // Incrementar contador de errores
+            intentos++;
+            int restantes = INTENTOS_MAXIMOS - intentos;
+
+            if (intentos >= INTENTOS_MAXIMOS) {
+                mostrarAlerta("Acceso Bloqueado", "Has superado el límite de 3 intentos fallidos. El programa se cerrará.", Alert.AlertType.ERROR);
+                Platform.exit();
+            } else {
+                mostrarAlerta("Error de Autenticación",
+                        "Usuario o contraseña incorrectos. Te quedan " + restantes + " intento(s).",
+                        Alert.AlertType.ERROR);
+
+                txtContrasena.clear();
+                txtContrasena.requestFocus();
+            }
         }
     }
 

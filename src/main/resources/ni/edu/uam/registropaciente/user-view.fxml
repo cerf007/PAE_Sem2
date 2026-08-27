@@ -12,7 +12,6 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <!-- Unicamente el Logo -->
     <ImageView fx:id="imgLogo" fitHeight="90.0" fitWidth="200.0" preserveRatio="true" />
 
     <TextField fx:id="txtUsuario" promptText="Usuario" />
