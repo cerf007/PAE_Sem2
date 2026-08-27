@@ -20,10 +20,11 @@ public class PatientController implements Initializable {
     @FXML private DatePicker dtpFechaIngreso;
     @FXML private RadioButton rbtnMasculino;
     @FXML private RadioButton rbtnFemenino;
-
     @FXML private ListView<Patient> lvRegistros;
 
     private ToggleGroup tgGenero;
+
+    private final LocalDate FECHA_MINIMA = LocalDate.of(2026, 1, 1);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -32,6 +33,19 @@ public class PatientController implements Initializable {
         tgGenero = new ToggleGroup();
         rbtnMasculino.setToggleGroup(tgGenero);
         rbtnFemenino.setToggleGroup(tgGenero);
+
+        dtpFechaIngreso.setEditable(false);
+
+        dtpFechaIngreso.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (date != null && date.isBefore(FECHA_MINIMA)) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffe6e6;"); // Color rojizo para días inhabilitados
+                }
+            }
+        });
     }
 
     @FXML
@@ -44,25 +58,46 @@ public class PatientController implements Initializable {
     }
 
     private boolean validarCampos() {
-        if (txtNombre.getText().trim().isEmpty() || txtApellido.getText().trim().isEmpty()) {
+        String nombre = txtNombre.getText().trim();
+        String apellido = txtApellido.getText().trim();
+
+        if (nombre.isEmpty() || apellido.isEmpty()) {
             mostrarAlerta("Campos vacíos", "Por favor ingrese nombres y apellidos.");
             return false;
         }
+
+        // Validar solo letras en nombres y apellidos
+        String regexSoloLetras = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$";
+        if (!nombre.matches(regexSoloLetras) || !apellido.matches(regexSoloLetras)) {
+            mostrarAlerta("Texto inválido", "Los nombres y apellidos solo deben contener letras.");
+            return false;
+        }
+
+        // Validar selección de género
         if (!rbtnMasculino.isSelected() && !rbtnFemenino.isSelected()) {
             mostrarAlerta("Género no seleccionado", "Debe seleccionar un género.");
             return false;
         }
+
+        // Validar selección de fecha
         if (dtpFechaIngreso.getValue() == null) {
             mostrarAlerta("Fecha vacía", "Debe seleccionar una fecha de ingreso.");
             return false;
         }
+
+        // Validar que la fecha sea mayor o igual al 01/01/2026
+        if (dtpFechaIngreso.getValue().isBefore(FECHA_MINIMA)) {
+            mostrarAlerta("Fecha inválida", "La fecha de ingreso no puede ser anterior al 01/01/2026.");
+            return false;
+        }
+
         return true;
     }
 
     private void leerDatos() {
         String nombres = txtNombre.getText().trim();
         String apellidos = txtApellido.getText().trim();
-        Boolean genero = rbtnMasculino.isSelected(); // true para Masculino, false para Femenino
+        Boolean genero = rbtnMasculino.isSelected();
         LocalDate fechaIngreso = dtpFechaIngreso.getValue();
 
         agregarPatient(new Patient(nombres, apellidos, genero, fechaIngreso));
