@@ -18,6 +18,7 @@ public class Patient {
 
     @Override
     public String toString() {
-        return nombres + " " + apellidos + " " + genero + " " + fechaIngreso;
+        String generoTexto = (genero == null) ? "No especificado" : (genero ? "Masculino" : "Femenino");
+        return nombres + " " + apellidos + " " + generoTexto + " " + fechaIngreso;
     }
 }

@@ -19,26 +19,52 @@ public class PatientController implements Initializable {
     @FXML private Label lblContador;
     @FXML private DatePicker dtpFechaIngreso;
     @FXML private RadioButton rbtnMasculino;
+    @FXML private RadioButton rbtnFemenino;
 
     @FXML private ListView<Patient> lvRegistros;
+
+    private ToggleGroup tgGenero;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         lvRegistros.setItems(patients.obtenerRegistros());
+
+        tgGenero = new ToggleGroup();
+        rbtnMasculino.setToggleGroup(tgGenero);
+        rbtnFemenino.setToggleGroup(tgGenero);
     }
 
     @FXML
-    protected void agregarOnClick(){
-        leerDatos();
-        cantidadPatient();
-        limpiarCampos();
+    protected void agregarOnClick() {
+        if (validarCampos()) {
+            leerDatos();
+            cantidadPatient();
+            limpiarCampos();
+        }
     }
 
-    private void leerDatos(){
-        String nombres = txtNombre.getText();
-        String apellidos = txtApellido.getText();
-        Boolean genero = rbtnMasculino.isSelected();
+    private boolean validarCampos() {
+        if (txtNombre.getText().trim().isEmpty() || txtApellido.getText().trim().isEmpty()) {
+            mostrarAlerta("Campos vacíos", "Por favor ingrese nombres y apellidos.");
+            return false;
+        }
+        if (!rbtnMasculino.isSelected() && !rbtnFemenino.isSelected()) {
+            mostrarAlerta("Género no seleccionado", "Debe seleccionar un género.");
+            return false;
+        }
+        if (dtpFechaIngreso.getValue() == null) {
+            mostrarAlerta("Fecha vacía", "Debe seleccionar una fecha de ingreso.");
+            return false;
+        }
+        return true;
+    }
+
+    private void leerDatos() {
+        String nombres = txtNombre.getText().trim();
+        String apellidos = txtApellido.getText().trim();
+        Boolean genero = rbtnMasculino.isSelected(); // true para Masculino, false para Femenino
         LocalDate fechaIngreso = dtpFechaIngreso.getValue();
+
         agregarPatient(new Patient(nombres, apellidos, genero, fechaIngreso));
     }
 
@@ -46,15 +72,22 @@ public class PatientController implements Initializable {
         patients.agregar(patient);
     }
 
-    private void cantidadPatient(){
+    private void cantidadPatient() {
         lblContador.setText("Registros almacenados: " + patients.obtenerRegistros().size());
     }
 
-    private void limpiarCampos(){
+    private void limpiarCampos() {
         txtNombre.setText("");
         txtApellido.setText("");
-
         dtpFechaIngreso.setValue(null);
-        rbtnMasculino.setSelected(false);
+        tgGenero.selectToggle(null);
+    }
+
+    private void mostrarAlerta(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }
