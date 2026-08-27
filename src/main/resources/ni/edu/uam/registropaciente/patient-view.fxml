@@ -3,6 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <VBox alignment="TOP_CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="433.0" prefWidth="375.0" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ni.edu.uam.registropaciente.contollers.PatientController">
    <children>
@@ -10,8 +11,25 @@
       <TextField fx:id="txtNombre" />
       <Label text="Apellidos:" />
       <TextField fx:id="txtApellido" />
-      <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#agregarOnClick" text="Agregar" />
       <Label fx:id="lblContador" />
+      <Separator prefWidth="200.0" />
+      <Label text="Genero">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <RadioButton fx:id="rbtnMasculino" mnemonicParsing="false" text="Masculino">
+         <toggleGroup>
+            <ToggleGroup fx:id="RbtnGroup" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="rbtnFemenino" mnemonicParsing="false" text="Femenino" toggleGroup="$RbtnGroup" />
+      <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#agregarOnClick" text="Agregar">
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding></Button>
+      <DatePicker fx:id="dtFechaIngreso" />
+      <ListView prefHeight="200.0" prefWidth="200.0" />
    </children>
    <padding>
       <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

@@ -5,11 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Patient {
-    private String nombre;
-    private String apellido;
+    private String nombres;
+    private String apellidos;
+    private Boolean genero;
+    private LocalDate fechaIngreso;
+
 }

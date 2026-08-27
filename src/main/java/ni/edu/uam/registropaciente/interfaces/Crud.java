@@ -7,5 +7,4 @@ public interface Crud <T> {
 
     public List<T> obtenerRegistros();
 
-
 }

@@ -5,6 +5,8 @@ import javafx.scene.control.*;
 import ni.edu.uam.registropaciente.dao.PatientDAO;
 import ni.edu.uam.registropaciente.modelos.Patient;
 
+import java.time.LocalDate;
+
 public class PatientController {
 
     PatientDAO patients = new PatientDAO();
@@ -19,18 +21,20 @@ public class PatientController {
     private Label lblContador;
 
     @FXML
-    private DatePicker dtpFchaIngreso;
+    private DatePicker dtpFechaIngreso;
 
     @FXML
-    private RadioButton rbtnGenero;
+    private RadioButton rbtnMasculino;
 
     @FXML
     private ListView lvRegistros;
+
 
     @FXML
     protected void agregarOnClick(){
         leerDatos();
         cantidadPatient();
+
         limpiarCampos();
 
     }
@@ -38,7 +42,9 @@ public class PatientController {
     private void leerDatos(){
         String nombres = txtNombre.getText();
         String apellidos = txtApellido.getText();
-        agregarPatient(new Patient(nombres, apellidos));
+        Boolean genero = rbtnMasculino.isSelected();
+        LocalDate fechaIngreso = dtpFechaIngreso.getValue();
+        agregarPatient(new Patient(nombres, apellidos, genero, fechaIngreso));
 
     }
 
@@ -49,8 +55,6 @@ public class PatientController {
     private void cantidadPatient(){
         lblContador.setText("Registros almacenados: " + patients.obtenerRegistros().size());
     }
-
-
 
     private void limpiarCampos(){
         txtNombre.setText("");
