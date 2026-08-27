@@ -12,6 +12,7 @@ public class PatientApplication  extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(PatientApplication.class.getResource("patient-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
+        stage.setResizable(false);
         stage.setTitle("Patient");
         stage.setScene(scene);
         stage.show();
