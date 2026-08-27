@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Getter
@@ -17,4 +16,8 @@ public class Patient {
     private Boolean genero;
     private LocalDate fechaIngreso;
 
+    @Override
+    public String toString() {
+        return nombres + " " + apellidos + " " + genero + " " + fechaIngreso;
+    }
 }
