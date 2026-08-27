@@ -1,8 +1,10 @@
 package ni.edu.uam.registropaciente.contollers;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import ni.edu.uam.registropaciente.dao.PatientDAO;
 import ni.edu.uam.registropaciente.modelos.Patient;
 
@@ -20,29 +22,42 @@ public class PatientController implements Initializable {
     @FXML private DatePicker dtpFechaIngreso;
     @FXML private RadioButton rbtnMasculino;
     @FXML private RadioButton rbtnFemenino;
-    @FXML private ListView<Patient> lvRegistros;
+
+    // Componentes del TableView
+    @FXML private TableView<Patient> tvRegistros;
+    @FXML private TableColumn<Patient, String> colNombres;
+    @FXML private TableColumn<Patient, String> colApellidos;
+    @FXML private TableColumn<Patient, String> colGenero;
+    @FXML private TableColumn<Patient, LocalDate> colFechaIngreso;
 
     private ToggleGroup tgGenero;
-
     private final LocalDate FECHA_MINIMA = LocalDate.of(2026, 1, 1);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        lvRegistros.setItems(patients.obtenerRegistros());
+        // Configurar columnas del TableView
+        colNombres.setCellValueFactory(new PropertyValueFactory<>("nombres"));
+        colApellidos.setCellValueFactory(new PropertyValueFactory<>("apellidos"));
+        colGenero.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getGeneroTexto()));
+        colFechaIngreso.setCellValueFactory(new PropertyValueFactory<>("fechaIngreso"));
 
+        // Enlazar lista
+        tvRegistros.setItems(patients.obtenerRegistros());
+
+        // Agrupar RadioButtons
         tgGenero = new ToggleGroup();
         rbtnMasculino.setToggleGroup(tgGenero);
         rbtnFemenino.setToggleGroup(tgGenero);
 
+        // Bloquear escritura e inhabilitar fechas anteriores a 2026
         dtpFechaIngreso.setEditable(false);
-
         dtpFechaIngreso.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
                 if (date != null && date.isBefore(FECHA_MINIMA)) {
                     setDisable(true);
-                    setStyle("-fx-background-color: #ffe6e6;"); // Color rojizo para días inhabilitados
+                    setStyle("-fx-background-color: #ffe6e6;");
                 }
             }
         });
@@ -66,26 +81,22 @@ public class PatientController implements Initializable {
             return false;
         }
 
-        // Validar solo letras en nombres y apellidos
         String regexSoloLetras = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$";
         if (!nombre.matches(regexSoloLetras) || !apellido.matches(regexSoloLetras)) {
             mostrarAlerta("Texto inválido", "Los nombres y apellidos solo deben contener letras.");
             return false;
         }
 
-        // Validar selección de género
         if (!rbtnMasculino.isSelected() && !rbtnFemenino.isSelected()) {
             mostrarAlerta("Género no seleccionado", "Debe seleccionar un género.");
             return false;
         }
 
-        // Validar selección de fecha
         if (dtpFechaIngreso.getValue() == null) {
             mostrarAlerta("Fecha vacía", "Debe seleccionar una fecha de ingreso.");
             return false;
         }
 
-        // Validar que la fecha sea mayor o igual al 01/01/2026
         if (dtpFechaIngreso.getValue().isBefore(FECHA_MINIMA)) {
             mostrarAlerta("Fecha inválida", "La fecha de ingreso no puede ser anterior al 01/01/2026.");
             return false;

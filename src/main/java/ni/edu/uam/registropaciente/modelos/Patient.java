@@ -16,6 +16,11 @@ public class Patient {
     private Boolean genero;
     private LocalDate fechaIngreso;
 
+    public String getGeneroTexto() {
+        if (this.genero == null) return "No especificado";
+        return this.genero ? "Masculino" : "Femenino";
+    }
+
     @Override
     public String toString() {
         String generoTexto = (genero == null) ? "No especificado" : (genero ? "Masculino" : "Femenino");
